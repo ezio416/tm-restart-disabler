@@ -8,7 +8,7 @@ void RenderMenu() {
     const bool solo = InSoloMap();
 
     if (!solo)
-        enabled = false;
+        enabled = true;
 
     if (UI::MenuItem(title, "", enabled, solo)) {
         trace((enabled ? "dis" : "en") + "abling restart button");
