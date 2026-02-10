@@ -4,23 +4,28 @@ const string title   = "\\$F60" + Icons::Refresh + "\\$G Show Restart Button";
 void RenderMenu() {
     const bool solo = InSoloMap();
 
-    if (!solo)
+    if (!solo) {
         enabled = true;
+    }
 
     if (UI::MenuItem(title, "", enabled, solo)) {
         trace((enabled ? "dis" : "en") + "abling restart button");
 
-        CTrackMania@ App = cast<CTrackMania@>(GetApp());
-        CTrackManiaNetwork@ Network = cast<CTrackManiaNetwork@>(App.Network);
+        auto App = cast<CTrackMania>(GetApp());
+        auto Network = cast<CTrackManiaNetwork>(App.Network);
         CGameManiaAppPlayground@ CMAP = Network.ClientManiaAppPlayground;
 
-        if (CMAP !is null && CMAP.UILayers.Length > 1) {
+        if (true
+            and CMAP !is null
+            and CMAP.UILayers.Length > 1
+        ) {
             bool success = false;
 
             for (int i = CMAP.UILayers.Length - 1; i >= 0; i--) {
                 CGameUILayer@ Layer = CMAP.UILayers[i];
-                if (Layer is null)
+                if (Layer is null) {
                     continue;
+                }
 
                 if (string(Layer.ManialinkPage).Trim().SubStr(0, 50).Contains("_PauseMenu")) {
                     success = ToggleRestartButton(Layer.LocalPage, !enabled);
@@ -28,37 +33,43 @@ void RenderMenu() {
                 }
             }
 
-            if (success)
+            if (success) {
                 enabled = !enabled;
-            else
+            } else {
                 warn("toggle failed");
-        } else
+            }
+
+        } else {
             warn("CMAP error");
+        }
     }
 }
 
 bool InSoloMap() {
-    CTrackMania@ App = cast<CTrackMania@>(GetApp());
-    CTrackManiaNetwork@ Network = cast<CTrackManiaNetwork@>(App.Network);
+    auto App = cast<CTrackMania>(GetApp());
+    auto Network = cast<CTrackManiaNetwork>(App.Network);
 
-    return App.RootMap !is null
-        && App.CurrentPlayground !is null
-        && App.PlaygroundScript !is null
-        && Network.ClientManiaAppPlayground !is null
-        && cast<CTrackManiaNetworkServerInfo@>(Network.ServerInfo).CurGameModeStr != "TM_Campaign_Local";
+    return true
+        and App.RootMap !is null
+        and App.CurrentPlayground !is null
+        and App.PlaygroundScript !is null
+        and Network.ClientManiaAppPlayground !is null
+        and cast<CTrackManiaNetworkServerInfo>(Network.ServerInfo).CurGameModeStr != "TM_Campaign_Local"
+    ;
 }
 
-const bool ToggleRestartButton(CGameManialinkPage@ Page, bool toggle) {
-    if (Page is null)
+const bool ToggleRestartButton(CGameManialinkPage@ Page, const bool toggle) {
+    if (Page is null) {
         return false;
+    }
 
     try {
-        cast<CGameManialinkQuad@>(
-            cast<CGameManialinkFrame@>(
-                cast<CGameManialinkFrame@>(
-                    cast<CGameManialinkFrame@>(
-                        cast<CGameManialinkFrame@>(
-                            cast<CGameManialinkFrame@>(
+        cast<CGameManialinkQuad>(
+            cast<CGameManialinkFrame>(
+                cast<CGameManialinkFrame>(
+                    cast<CGameManialinkFrame>(
+                        cast<CGameManialinkFrame>(
+                            cast<CGameManialinkFrame>(
                                 Page.GetFirstChild("frame-buttons-container")
                             ).GetFirstChild("button-restart")
                         ).GetFirstChild("Trackmania_Button_frame-align")
@@ -68,6 +79,7 @@ const bool ToggleRestartButton(CGameManialinkPage@ Page, bool toggle) {
         ).Visible = toggle;
 
         return true;
+
     } catch {
         return false;
     }
