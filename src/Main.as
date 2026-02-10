@@ -1,6 +1,3 @@
-// c 2024-06-06
-// m 2024-06-06
-
 bool         enabled = true;
 const string title   = "\\$F60" + Icons::Refresh + "\\$G Show Restart Button";
 
